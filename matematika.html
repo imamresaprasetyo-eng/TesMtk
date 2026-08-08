@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Matematika — Hitung Cepat</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 16px;
+        padding: max(16px, env(safe-area-inset-top))
+          max(16px, env(safe-area-inset-right))
+          max(16px, env(safe-area-inset-bottom))
+          max(16px, env(safe-area-inset-left));
+        color: #333;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-width: 100vw;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 480px;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      header {
+        background: linear-gradient(135deg, #ff9a56, #ff5e62);
+        padding: 24px 20px;
+        text-align: center;
+        color: #fff;
+      }
+
+      header h1 {
+        font-size: 1.7rem;
+        letter-spacing: 1px;
+      }
+
+      header p {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        margin-top: 4px;
+      }
+
+      main {
+        padding: 24px 20px;
+      }
+
+      /* ====== Layar Menu ====== */
+      .menu-section {
+        margin-bottom: 20px;
+      }
+
+      .menu-section h2 {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .option-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+        gap: 10px;
+      }
+
+      .option-btn {
+        border: 2px solid #e0e0e0;
+        background: #fafafa;
+        border-radius: 14px;
+        padding: 14px 6px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #444;
+        cursor: pointer;
+        transition: all 0.2s;
+        user-select: none;
+      }
+
+      .option-btn .sub {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: #888;
+        margin-top: 2px;
+      }
+
+      .option-btn:active {
+        transform: scale(0.95);
+      }
+
+      .option-btn.selected {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+      }
+
+      .option-btn.selected .sub {
+        color: #e3e3ff;
+      }
+
+      /* ====== Tombol Utama ====== */
+      .primary-btn {
+        width: 100%;
+        padding: 16px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        color: #1a3c2b;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: all 0.2s;
+        box-shadow: 0 8px 20px rgba(56, 249, 215, 0.4);
+      }
+
+      .primary-btn:active {
+        transform: scale(0.96);
+      }
+
+      .primary-btn.secondary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .sound-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #f0f0f5;
+        border: 1px solid #e0e0e5;
+        border-radius: 30px;
+        padding: 8px 18px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #555;
+        cursor: pointer;
+        margin-top: 12px;
+        transition: all 0.2s;
+      }
+
+      .sound-toggle .switcher {
+        width: 44px;
+        height: 24px;
+        background: #ccc;
+        border-radius: 12px;
+        position: relative;
+        transition: background 0.2s;
+      }
+
+      .sound-toggle .switcher::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .sound-toggle.on .switcher {
+        background: #43e97b;
+      }
+
+      .sound-toggle.on .switcher::after {
+        transform: translateX(20px);
+      }
+
+      /* ====== Layar Kuis ====== */
+      .quiz-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .badge {
+        background: #f0f0f5;
+        border-radius: 30px;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #555;
+      }
+
+      .badge.score-badge {
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        color: #1a3c2b;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 10px;
+        background: #eee;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #43e97b, #38f9d7);
+        border-radius: 10px;
+        transition: width 0.4s ease;
+      }
+
+      /* Timer */
+      .timer-wrap {
+        margin-bottom: 16px;
+      }
+
+      .timer-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #888;
+        margin-bottom: 6px;
+      }
+
+      .timer-bar {
+        width: 100%;
+        height: 12px;
+        background: #eee;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .timer-fill {
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, #43e97b, #38f9d7);
+        border-radius: 10px;
+        transition: width 0.15s linear;
+      }
+
+      .timer-fill.warning {
+        background: linear-gradient(90deg, #ff5e62, #ff9a56);
+      }
+
+      /* Soal */
+      .question-box {
+        text-align: center;
+        background: linear-gradient(135deg, #f7f8ff, #fdf2ff);
+        border: 2px dashed #c9cdf5;
+        border-radius: 20px;
+        padding: 28px 14px;
+        margin-bottom: 20px;
+      }
+
+      .question-text {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #2d2d44;
+        line-height: 1.3;
+        word-break: break-word;
+      }
+
+      .answer-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .answer-input {
+        flex: 1;
+        min-width: 0;
+        padding: 16px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+        border: 3px solid #e0e0e5;
+        border-radius: 16px;
+        outline: none;
+        color: #2d2d44;
+        transition: border-color 0.2s;
+        scroll-margin-top: 16px;
+      }
+
+      .answer-input:focus {
+        border-color: #667eea;
+      }
+
+      .answer-input.correct {
+        border-color: #43e97b;
+        background: #eafff3;
+      }
+
+      .answer-input.wrong {
+        border-color: #ff5e62;
+        background: #ffeaea;
+      }
+
+      .action-btn {
+        padding: 16px 24px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        color: #fff;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+
+      .action-btn:active {
+        transform: scale(0.95);
+      }
+
+      .action-btn.next-btn {
+        background: linear-gradient(135deg, #43e97b, #38f9d7);
+        color: #1a3c2b;
+        box-shadow: 0 6px 16px rgba(56, 249, 215, 0.4);
+      }
+
+      .feedback {
+        text-align: center;
+        font-size: 1.05rem;
+        font-weight: 600;
+        min-height: 28px;
+        margin-top: 6px;
+        display: none;
+      }
+
+      .feedback.show {
+        display: block;
+      }
+
+      .feedback.correct-msg {
+        color: #1e9e55;
+      }
+
+      .feedback.wrong-msg {
+        color: #e0393e;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ====== Layar Hasil ====== */
+      .result-card {
+        text-align: center;
+        padding: 10px 0;
+      }
+
+      .result-emoji {
+        font-size: 4.5rem;
+        margin-bottom: 10px;
+      }
+
+      .result-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #2d2d44;
+        margin-bottom: 6px;
+      }
+
+      .result-sub {
+        color: #777;
+        margin-bottom: 20px;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .result-box {
+        background: #f6f7ff;
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .result-box .value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #2d2d44;
+      }
+
+      .result-box .label {
+        font-size: 0.8rem;
+        color: #888;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+
+      .result-grade {
+        font-size: 2.4rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #ff9a56, #ff5e62);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+      }
+
+      @keyframes pop {
+        0% {
+          transform: scale(0.6);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .pop {
+        animation: pop 0.4s ease;
+      }
+
+      .fade-in {
+        animation: fadeIn 0.35s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 600px) {
+        header {
+          padding: 18px 16px;
+        }
+        main {
+          padding: 18px 14px;
+        }
+      }
+
+      @media (max-width: 400px) {
+        body {
+          padding: 8px;
+        }
+        .question-box {
+          padding: 20px 10px;
+        }
+        .question-text {
+          font-size: 1.7rem;
+        }
+        .action-btn {
+          padding: 14px 14px;
+          font-size: 1rem;
+        }
+        .answer-input {
+          padding: 14px;
+          font-size: 1.3rem;
+        }
+        .badge {
+          font-size: 0.8rem;
+          padding: 5px 10px;
+        }
+        .result-emoji {
+          font-size: 3.8rem;
+        }
+        .result-title {
+          font-size: 1.4rem;
+        }
+        .result-grid {
+          gap: 8px;
+        }
+        .result-box {
+          padding: 12px;
+        }
+      }
+
+      /* Perangkat sangat kecil (mis. iPhone SE lama 320px) */
+      @media (max-width: 340px) {
+        body {
+          padding: 6px;
+        }
+        .option-btn {
+          padding: 12px 4px;
+          font-size: 1.2rem;
+        }
+        .question-text {
+          font-size: 1.5rem;
+        }
+        .answer-input {
+          font-size: 1.2rem;
+        }
+        .action-btn {
+          padding: 14px 10px;
+        }
+        .result-card {
+          padding: 4px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🧮 Game Matematika</h1>
+        <p>Hitung Cepat • 3 Suku Angka</p>
+      </header>
+
+      <main>
+        <!-- ================= MENU ================= -->
+        <section id="menuScreen">
+          <div class="menu-section">
+            <h2>🔢 Pilih Operasi Hitung</h2>
+            <div class="option-grid" id="operationGrid">
+              <button class="option-btn" data-op="add" onclick="selectOp(this)">
+                +<span class="sub">Tambah</span>
+              </button>
+              <button class="option-btn" data-op="sub" onclick="selectOp(this)">
+                −<span class="sub">Kurang</span>
+              </button>
+              <button class="option-btn" data-op="mul" onclick="selectOp(this)">
+                ×<span class="sub">Kali</span>
+              </button>
+              <button class="option-btn" data-op="div" onclick="selectOp(this)">
+                ÷<span class="sub">Bagi</span>
+              </button>
+              <button class="option-btn" data-op="mix" onclick="selectOp(this)">
+                🎲<span class="sub">Campur</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <h2>🎯 Pilih Level</h2>
+            <div class="option-grid" id="levelGrid">
+              <button
+                class="option-btn"
+                data-level="easy"
+                onclick="selectLevel(this)"
+              >
+                🟢<span class="sub">Mudah</span>
+              </button>
+              <button
+                class="option-btn"
+                data-level="medium"
+                onclick="selectLevel(this)"
+              >
+                🟡<span class="sub">Sedang</span>
+              </button>
+              <button
+                class="option-btn"
+                data-level="hard"
+                onclick="selectLevel(this)"
+              >
+                🔴<span class="sub">Sulit</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="menu-section">
+            <h2>📝 Jumlah Soal</h2>
+            <div class="option-grid" id="countGrid">
+              <button
+                class="option-btn"
+                data-count="5"
+                onclick="selectCount(this)"
+              >
+                5
+              </button>
+              <button
+                class="option-btn"
+                data-count="10"
+                onclick="selectCount(this)"
+              >
+                10
+              </button>
+              <button
+                class="option-btn"
+                data-count="15"
+                onclick="selectCount(this)"
+              >
+                15
+              </button>
+              <button
+                class="option-btn"
+                data-count="20"
+                onclick="selectCount(this)"
+              >
+                20
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="sound-toggle on"
+            id="soundToggle"
+            onclick="toggleSound()"
+          >
+            🔊 Suara
+            <span class="switcher"></span>
+          </button>
+
+          <button class="primary-btn" onclick="startQuiz()">
+            🚀 Mulai Bermain!
+          </button>
+        </section>
+
+        <!-- ================= KUIS ================= -->
+        <section id="quizScreen" class="hidden">
+          <div class="quiz-top">
+            <span class="badge" id="questionCounter">Soal 1/10</span>
+            <span class="badge" id="operationBadge">➕ Pertambahan</span>
+            <span class="badge score-badge" id="scoreBadge">⭐ 0</span>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+
+          <div class="timer-wrap">
+            <div class="timer-label">
+              <span>⏱️ Waktu</span>
+              <span id="timerText">30s</span>
+            </div>
+            <div class="timer-bar">
+              <div class="timer-fill" id="timerFill"></div>
+            </div>
+          </div>
+
+          <div class="question-box">
+            <div class="question-text" id="questionText">25 + 21 + 34 = ?</div>
+          </div>
+
+          <div class="answer-row">
+            <input
+              type="number"
+              id="answerInput"
+              class="answer-input"
+              placeholder="Jawaban?"
+              inputmode="numeric"
+            />
+            <button class="action-btn" id="checkBtn" onclick="checkAnswer()">
+              Cek
+            </button>
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+          <button
+            class="primary-btn next-btn hidden"
+            id="nextBtn"
+            onclick="nextQuestion()"
+          >
+            Soal Berikutnya ➡️
+          </button>
+        </section>
+
+        <!-- ================= HASIL ================= -->
+        <section id="resultScreen" class="hidden">
+          <div class="result-card">
+            <div class="result-emoji" id="resultEmoji">🏆</div>
+            <div class="result-title" id="resultTitle">Selamat!</div>
+            <div class="result-sub" id="resultSub">Kuis selesai</div>
+
+            <div class="result-grid">
+              <div class="result-box">
+                <div class="value" id="resultScore">0</div>
+                <div class="label">Nilai Akhir</div>
+              </div>
+              <div class="result-box">
+                <div class="value" id="resultTime">0:00</div>
+                <div class="label">Total Waktu</div>
+              </div>
+              <div class="result-box">
+                <div class="value" style="color: #43b977" id="resultCorrect">
+                  0
+                </div>
+                <div class="label">✅ Benar</div>
+              </div>
+              <div class="result-box">
+                <div class="value" style="color: #e0393e" id="resultWrong">
+                  0
+                </div>
+                <div class="label">❌ Salah</div>
+              </div>
+            </div>
+
+            <div class="result-grade" id="resultGrade">A</div>
+
+            <button class="primary-btn" onclick="backToMenu()">
+              🔁 Main Lagi
+            </button>
+            <button
+              class="primary-btn secondary"
+              style="margin-top: 10px"
+              onclick="backToMenu()"
+            >
+              🏠 Menu Utama
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      // ============================================================
+      //  KONFIGURASI
+      // ============================================================
+      const CONFIG = {
+        opNames: {
+          add: "➕ Pertambahan",
+          sub: "➖ Pengurangan",
+          mul: "✖️ Perkalian",
+          div: "➗ Pembagian",
+          mix: "🎲 Campuran",
+        },
+        opSymbols: { add: "+", sub: "−", mul: "×", div: "÷" },
+        levelNames: { easy: "Mudah", medium: "Sedang", hard: "Sulit" },
+        timerSeconds: { easy: 30, medium: 45, hard: 60 },
+        ranges: {
+          easy: {
+            add: [1, 20],
+            sub: [1, 20],
+            mul: [1, 9],
+            div: [1, 9], // pembagi
+            negChance: 0.15,
+          },
+          medium: {
+            add: [10, 99],
+            sub: [10, 99],
+            mul: [2, 12],
+            div: [2, 12],
+            negChance: 0.25,
+          },
+          hard: {
+            add: [100, 999],
+            sub: [100, 999],
+            mul: [3, 20],
+            div: [3, 20],
+            negChance: 0.3,
+          },
+        },
+      };
+
+      // ============================================================
+      //  STATE
+      // ============================================================
+      let state = {
+        op: null,
+        level: "easy",
+        totalQuestions: 10,
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        correctCount: 0,
+        wrongCount: 0,
+        answered: false,
+        timerInterval: null,
+        timeLeft: 0,
+        startTime: 0,
+        soundOn: true,
+      };
+
+      // ============================================================
+      //  AUDIO (Web Audio API — tanpa file eksternal)
+      // ============================================================
+      let audioCtx = null;
+
+      function getAudioCtx() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioCtx;
+      }
+
+      function playTone(
+        freq,
+        duration,
+        type = "sine",
+        volume = 0.15,
+        delay = 0,
+      ) {
+        if (!state.soundOn) return;
+        try {
+          const ctx = getAudioCtx();
+          if (ctx.state === "suspended") ctx.resume();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const t = ctx.currentTime + delay;
+          osc.type = type;
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(volume, t + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + duration + 0.05);
+        } catch (e) {}
+      }
+
+      function soundCorrect() {
+        playTone(523.25, 0.12, "sine", 0.2);
+        playTone(659.25, 0.12, "sine", 0.2, 0.12);
+        playTone(783.99, 0.2, "sine", 0.2, 0.24);
+      }
+
+      function soundWrong() {
+        playTone(220, 0.25, "sawtooth", 0.15);
+        playTone(160, 0.35, "sawtooth", 0.15, 0.15);
+      }
+
+      function soundClick() {
+        playTone(880, 0.05, "square", 0.08);
+      }
+
+      function soundFinish() {
+        soundCorrect();
+        playTone(1046.5, 0.3, "sine", 0.2, 0.4);
+        playTone(1318.5, 0.5, "sine", 0.2, 0.6);
+      }
+
+      function soundTick() {
+        playTone(1000, 0.05, "square", 0.08);
+      }
+
+      // ============================================================
+      //  UTILITAS
+      // ============================================================
+      function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function randomWithSign(val, chance) {
+        // ~chance kemungkinan jadi negatif
+        return Math.random() < chance ? -val : val;
+      }
+
+      function fmt(n) {
+        // tampilkan angka negatif dalam kurung: (-8)
+        return n < 0 ? `(${n})` : `${n}`;
+      }
+
+      // ============================================================
+      //  PEMBANGKIT SOAL (3 suku angka, bisa negatif)
+      // ============================================================
+      function generateQuestion(op, level) {
+        const cfg = CONFIG.ranges[level];
+        if (op === "mix") {
+          const ops = ["add", "sub", "mul", "div"];
+          op = ops[rand(0, ops.length - 1)];
+        }
+
+        let a, b, c, answer, symbol;
+
+        if (op === "add") {
+          const [min, max] = cfg.add;
+          a = randomWithSign(rand(min, max), cfg.negChance);
+          b = randomWithSign(rand(min, max), cfg.negChance);
+          c = randomWithSign(rand(min, max), cfg.negChance);
+          answer = a + b + c;
+          symbol = "+";
+        } else if (op === "sub") {
+          const [min, max] = cfg.sub;
+          a = randomWithSign(rand(min, max), cfg.negChance);
+          b = randomWithSign(rand(min, max), cfg.negChance);
+          c = randomWithSign(rand(min, max), cfg.negChance);
+          answer = a - b - c;
+          symbol = "−";
+        } else if (op === "mul") {
+          const [min, max] = cfg.mul;
+          a = randomWithSign(rand(min, max), cfg.negChance);
+          b = randomWithSign(rand(min, max), cfg.negChance);
+          c = randomWithSign(rand(min, max), cfg.negChance);
+          answer = a * b * c;
+          symbol = "×";
+        } else if (op === "div") {
+          // Pastikan hasilnya selalu bilangan bulat:
+          // a = b × c × q  →  a ÷ b ÷ c = q
+          const [dMin, dMax] = cfg.div;
+          b = randomWithSign(rand(dMin, dMax), cfg.negChance);
+          c = randomWithSign(rand(dMin, dMax), cfg.negChance);
+          // jangan sampai b atau c = 0
+          if (b === 0) b = 1;
+          if (c === 0) c = 1;
+          const q = rand(dMin, Math.max(dMin, dMax));
+          a = b * c * q;
+          // supaya jawaban terkadang negatif, ubah tanda a
+          if (Math.random() < cfg.negChance) a = -a;
+          answer = a / b / c;
+          symbol = "÷";
+        }
+
+        return {
+          op: op,
+          symbol: symbol,
+          terms: [a, b, c],
+          answer: answer,
+        };
+      }
+
+      function formatQuestion(q) {
+        const [a, b, c] = q.terms;
+        return `${fmt(a)} ${q.symbol} ${fmt(b)} ${q.symbol} ${fmt(c)} = ?`;
+      }
+
+      // ============================================================
+      //  NAVIGASI MENU
+      // ============================================================
+      function selectOp(btn) {
+        soundClick();
+        document
+          .querySelectorAll("#operationGrid .option-btn")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        state.op = btn.dataset.op;
+      }
+
+      function selectLevel(btn) {
+        soundClick();
+        document
+          .querySelectorAll("#levelGrid .option-btn")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        state.level = btn.dataset.level;
+      }
+
+      function selectCount(btn) {
+        soundClick();
+        document
+          .querySelectorAll("#countGrid .option-btn")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        state.totalQuestions = parseInt(btn.dataset.count, 10);
+      }
+
+      function toggleSound() {
+        state.soundOn = !state.soundOn;
+        const el = document.getElementById("soundToggle");
+        el.classList.toggle("on", state.soundOn);
+        el.innerHTML = state.soundOn
+          ? `🔊 Suara <span class="switcher"></span>`
+          : `🔇 Suara <span class="switcher"></span>`;
+        if (state.soundOn) soundClick();
+      }
+
+      // ============================================================
+      //  TIMER
+      // ============================================================
+      function startTimer() {
+        stopTimer();
+        const total = CONFIG.timerSeconds[state.level];
+        state.timeLeft = total;
+        updateTimerUI(total, total);
+
+        state.timerInterval = setInterval(() => {
+          state.timeLeft -= 0.1;
+          if (state.timeLeft <= 0) {
+            state.timeLeft = 0;
+            stopTimer();
+            // waktu habis → dianggap salah
+            if (!state.answered) {
+              handleTimeout();
+            }
+          }
+          updateTimerUI(state.timeLeft, total);
+        }, 100);
+      }
+
+      function stopTimer() {
+        if (state.timerInterval) {
+          clearInterval(state.timerInterval);
+          state.timerInterval = null;
+        }
+      }
+
+      function updateTimerUI(remaining, total) {
+        const fill = document.getElementById("timerFill");
+        const text = document.getElementById("timerText");
+        const pct = Math.max(0, (remaining / total) * 100);
+        fill.style.width = pct + "%";
+        fill.classList.toggle("warning", pct <= 25);
+        text.textContent = Math.ceil(remaining) + "s";
+        if (remaining <= 5 && remaining > 0) {
+          soundTick();
+        }
+      }
+
+      // ============================================================
+      //  KUIS
+      // ============================================================
+      function startQuiz() {
+        if (!state.op) {
+          alert("Pilih dulu operasi hitungnya! 😊");
+          return;
+        }
+
+        soundClick();
+        state.questions = [];
+        for (let i = 0; i < state.totalQuestions; i++) {
+          state.questions.push(generateQuestion(state.op, state.level));
+        }
+        state.currentIndex = 0;
+        state.score = 0;
+        state.correctCount = 0;
+        state.wrongCount = 0;
+        state.startTime = Date.now();
+
+        document.getElementById("menuScreen").classList.add("hidden");
+        document.getElementById("resultScreen").classList.add("hidden");
+        document.getElementById("quizScreen").classList.remove("hidden");
+
+        document.getElementById("operationBadge").textContent =
+          CONFIG.opNames[state.op] + " • " + CONFIG.levelNames[state.level];
+
+        showQuestion();
+      }
+
+      function showQuestion() {
+        const q = state.questions[state.currentIndex];
+        state.answered = false;
+
+        document.getElementById("questionCounter").textContent =
+          `Soal ${state.currentIndex + 1}/${state.totalQuestions}`;
+        document.getElementById("questionText").textContent = formatQuestion(q);
+        document.getElementById("scoreBadge").textContent = `⭐ ${state.score}`;
+
+        document.getElementById("progressFill").style.width =
+          (state.currentIndex / state.totalQuestions) * 100 + "%";
+
+        const input = document.getElementById("answerInput");
+        input.value = "";
+        input.classList.remove("correct", "wrong");
+        input.disabled = false;
+        input.focus();
+
+        const feedback = document.getElementById("feedback");
+        feedback.className = "feedback";
+        feedback.textContent = "";
+
+        document.getElementById("checkBtn").classList.remove("hidden");
+        document.getElementById("checkBtn").textContent = "Cek";
+        document.getElementById("nextBtn").classList.add("hidden");
+
+        startTimer();
+      }
+
+      function checkAnswer() {
+        if (state.answered) return;
+        const input = document.getElementById("answerInput");
+        const userAnswer = parseFloat(input.value);
+        if (isNaN(userAnswer)) {
+          input.focus();
+          input.classList.add("wrong");
+          setTimeout(() => input.classList.remove("wrong"), 500);
+          soundWrong();
+          return;
+        }
+
+        state.answered = true;
+        stopTimer();
+
+        const q = state.questions[state.currentIndex];
+        const isCorrect = Math.abs(userAnswer - q.answer) < 0.001;
+        const feedback = document.getElementById("feedback");
+        feedback.classList.add("show");
+
+        if (isCorrect) {
+          state.score += 10;
+          state.correctCount++;
+          input.classList.add("correct");
+          feedback.textContent = "✅ Benar! Hebat! +10 poin";
+          feedback.className = "feedback show correct-msg";
+          soundCorrect();
+        } else {
+          state.wrongCount++;
+          input.classList.add("wrong");
+          feedback.textContent = `❌ Salah! Jawabannya: ${q.answer}`;
+          feedback.className = "feedback show wrong-msg";
+          soundWrong();
+        }
+
+        document.getElementById("scoreBadge").textContent = `⭐ ${state.score}`;
+        document.getElementById("progressFill").style.width =
+          ((state.currentIndex + 1) / state.totalQuestions) * 100 + "%";
+
+        input.disabled = true;
+        const checkBtn = document.getElementById("checkBtn");
+        checkBtn.classList.add("hidden");
+
+        const nextBtn = document.getElementById("nextBtn");
+        nextBtn.classList.remove("hidden");
+        nextBtn.textContent =
+          state.currentIndex === state.totalQuestions - 1
+            ? "🏁 Lihat Hasil!"
+            : "Soal Berikutnya ➡️";
+      }
+
+      function handleTimeout() {
+        const q = state.questions[state.currentIndex];
+        state.wrongCount++;
+        state.answered = true;
+
+        const input = document.getElementById("answerInput");
+        input.classList.add("wrong");
+        input.disabled = true;
+
+        const feedback = document.getElementById("feedback");
+        feedback.textContent = `⏰ Waktu habis! Jawabannya: ${q.answer}`;
+        feedback.className = "feedback show wrong-msg";
+
+        document.getElementById("checkBtn").classList.add("hidden");
+
+        const nextBtn = document.getElementById("nextBtn");
+        nextBtn.classList.remove("hidden");
+        nextBtn.textContent =
+          state.currentIndex === state.totalQuestions - 1
+            ? "🏁 Lihat Hasil!"
+            : "Soal Berikutnya ➡️";
+
+        soundWrong();
+      }
+
+      function nextQuestion() {
+        soundClick();
+        state.currentIndex++;
+        if (state.currentIndex >= state.totalQuestions) {
+          finishQuiz();
+        } else {
+          showQuestion();
+        }
+      }
+
+      function finishQuiz() {
+        stopTimer();
+        const totalTimeSec = Math.round((Date.now() - state.startTime) / 1000);
+        const minutes = Math.floor(totalTimeSec / 60);
+        const seconds = totalTimeSec % 60;
+        const timeStr = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+        const pct = Math.round(
+          (state.correctCount / state.totalQuestions) * 100,
+        );
+
+        let emoji, title, grade, color;
+        if (pct >= 90) {
+          emoji = "🏆";
+          title = "Luar Biasa!";
+          grade = "A";
+        } else if (pct >= 75) {
+          emoji = "🌟";
+          title = "Hebat!";
+          grade = "B";
+        } else if (pct >= 60) {
+          emoji = "👍";
+          title = "Bagus!";
+          grade = "C";
+        } else if (pct >= 40) {
+          emoji = "💪";
+          title = "Terus Berlatih!";
+          grade = "D";
+        } else {
+          emoji = "📚";
+          title = "Ayo Semangat!";
+          grade = "E";
+        }
+
+        document.getElementById("resultEmoji").textContent = emoji;
+        document.getElementById("resultTitle").textContent = title;
+        document.getElementById("resultSub").textContent =
+          `Kamu menjawab ${pct}% soal dengan benar`;
+        document.getElementById("resultScore").textContent = state.score;
+        document.getElementById("resultTime").textContent = timeStr;
+        document.getElementById("resultCorrect").textContent =
+          state.correctCount;
+        document.getElementById("resultWrong").textContent = state.wrongCount;
+        document.getElementById("resultGrade").textContent = grade;
+
+        document.getElementById("quizScreen").classList.add("hidden");
+        document.getElementById("resultScreen").classList.remove("hidden");
+        document
+          .getElementById("resultScreen")
+          .querySelector(".result-card")
+          .classList.add("pop");
+
+        soundFinish();
+      }
+
+      function backToMenu() {
+        soundClick();
+        stopTimer();
+        document.getElementById("resultScreen").classList.add("hidden");
+        document.getElementById("quizScreen").classList.add("hidden");
+        document.getElementById("menuScreen").classList.remove("hidden");
+      }
+
+      // ============================================================
+      //  EVENT TAMBAHAN
+      // ============================================================
+      document
+        .getElementById("answerInput")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            if (state.answered) {
+              nextQuestion();
+            } else {
+              checkAnswer();
+            }
+          }
+        });
+
+      // Set default selection di menu
+      document
+        .getElementById("operationGrid")
+        .children[0].classList.add("selected");
+      state.op = "add";
+      document
+        .getElementById("levelGrid")
+        .children[0].classList.add("selected");
+      document
+        .getElementById("countGrid")
+        .children[1].classList.add("selected");
+      state.totalQuestions = 10;
+    </script>
+  </body>
+</html>
